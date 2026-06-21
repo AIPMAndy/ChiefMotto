@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ChiefMotto</title>
+  <link rel="stylesheet" href="themes.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      -webkit-app-region: drag;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Helvetica Neue", "Segoe UI", Roboto, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      overflow: hidden;
+      background: transparent;
+      cursor: move;
+      transition: opacity 0.15s ease;
+    }
+
+    body:active {
+      cursor: grabbing;
+    }
+
+    .container {
+      padding: 20px 30px 25px 30px;
+      border-radius: 12px;
+      position: relative;
+      min-width: 200px;
+      max-width: 600px;
+      animation: fadeInUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      opacity: 1;
+      transition: all 0.15s ease;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(-10px) scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .motto-text {
+      user-select: none;
+      letter-spacing: 0.5px;
+      line-height: 1.6;
+      word-wrap: break-word;
+      max-width: 600px;
+      width: fit-content;
+      position: relative;
+      z-index: 1;
+      font-size: 16px;
+    }
+
+    .close-btn {
+      -webkit-app-region: no-drag;
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: rgba(255, 59, 48, 0.85);
+      border: none;
+      cursor: pointer;
+      opacity: 0.3;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 14px;
+      line-height: 1;
+      font-weight: 600;
+      box-shadow: 0 2px 8px rgba(255, 59, 48, 0.3);
+      z-index: 10;
+    }
+
+    .container:hover .close-btn {
+      opacity: 1;
+    }
+
+    .close-btn:hover {
+      background: rgba(255, 59, 48, 1);
+      transform: scale(1.1);
+      box-shadow: 0 4px 12px rgba(255, 59, 48, 0.5);
+    }
+
+    .close-btn:active {
+      transform: scale(0.95);
+    }
+
+    .modal {
+      -webkit-app-region: no-drag;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      min-width: 100vw;
+      min-height: 100vh;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(10px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      overflow: auto;
+    }
+
+    .modal.show {
+      display: flex;
+      animation: modalFadeIn 0.2s ease forwards;
+    }
+
+    @keyframes modalFadeIn {
+      to { opacity: 1; }
+    }
+
+    .modal-content {
+      background: rgba(255, 255, 255, 0.95);
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      text-align: center;
+      color: #333;
+      width: 450px;
+      max-width: 90vw;
+      max-height: 85vh;
+      overflow-y: auto;
+      transform: scale(0.9);
+      animation: contentPopIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      position: relative;
+      margin: auto;
+    }
+
+    @keyframes contentPopIn {
+      to {
+        transform: scale(1);
+      }
+    }
+
+    .modal-content::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .modal-content::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.1);
+      border-radius: 4px;
+    }
+
+    .modal-content::-webkit-scrollbar-thumb {
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 4px;
+    }
+
+    .modal-content::-webkit-scrollbar-thumb:hover {
+      background: rgba(0, 0, 0, 0.5);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .modal-content {
+        background: rgba(40, 40, 40, 0.95);
+        color: #fff;
+      }
+
+      .modal-content::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      .modal-content::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.3);
+      }
+
+      .modal-content::-webkit-scrollbar-thumb:hover {
+        background: rgba(255, 255, 255, 0.5);
+      }
+
+      #aboutModal .modal-content [style*="background: rgba(0, 122, 255, 0.05)"] {
+        background: rgba(0, 122, 255, 0.15) !important;
+      }
+
+      #aboutModal #wechatIdDisplay {
+        background: rgba(60, 60, 60, 0.9) !important;
+        color: #fff !important;
+        border-color: #555 !important;
+      }
+
+      #aboutModal .modal-content [style*="color: #666"] {
+        color: #aaa !important;
+      }
+    }
+
+    .modal-close-btn {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: rgba(0, 0, 0, 0.1);
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #666;
+      font-size: 18px;
+      line-height: 1;
+      transition: all 0.2s;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .modal-close-btn {
+        background: rgba(255, 255, 255, 0.1);
+        color: #aaa;
+      }
+    }
+
+    .modal-close-btn:hover {
+      background: rgba(0, 0, 0, 0.15);
+      transform: scale(1.1);
+    }
+
+    .modal-close-btn:active {
+      transform: scale(0.9);
+    }
+
+    .modal-content h2 {
+      font-size: 24px;
+      margin-bottom: 20px;
+      font-weight: 600;
+    }
+
+    .modal-content p {
+      font-size: 14px;
+      color: #666;
+      margin: 5px 0;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .modal-content p {
+        color: #aaa;
+      }
+    }
+
+    /* 主题选择器 */
+    .theme-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin: 20px 0;
+    }
+
+    .theme-card {
+      padding: 16px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+      border: 2px solid transparent;
+      position: relative;
+      overflow: hidden;
+      outline: none;
+    }
+
+    .theme-card:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .theme-card:focus {
+      border-color: #007AFF;
+      box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.3);
+    }
+
+    .theme-card.active {
+      border-color: #007AFF;
+      box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.2);
+    }
+
+    .theme-checkmark {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      width: 20px;
+      height: 20px;
+      background: #007AFF;
+      color: white;
+      border-radius: 50%;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .theme-card.active .theme-checkmark {
+      display: flex;
+    }
+
+    .theme-name {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .theme-preview {
+      font-size: 12px;
+      opacity: 0.8;
+    }
+
+    /* 各主题卡片样式 */
+    .theme-card[data-theme="glass"] {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
+      backdrop-filter: blur(10px);
+      color: #333;
+    }
+
+    .theme-card[data-theme="vintage"] {
+      background: linear-gradient(135deg, #f5e6d3, #e8d5b7);
+      color: #3d2817;
+    }
+
+    .theme-card[data-theme="gift"] {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+    }
+
+    .theme-card[data-theme="minimal"] {
+      background: white;
+      border: 2px solid #000;
+      color: #000;
+    }
+
+    .theme-card[data-theme="rainbow"] {
+      background: linear-gradient(135deg, #667eea, #764ba2, #f093fb);
+      color: white;
+    }
+
+    .theme-card[data-theme="neon"] {
+      background: rgba(10, 10, 30, 0.95);
+      border: 2px solid #00ffff;
+      color: #00ffff;
+    }
+
+    .theme-card[data-theme="wood"] {
+      background: linear-gradient(90deg, #8b6f47, #a0826d);
+      color: #f5deb3;
+    }
+
+    .theme-card[data-theme="sakura"] {
+      background: linear-gradient(135deg, #ffeef8, #ffe0f0);
+      color: #d5006d;
+    }
+
+    .edit-input-wrapper {
+      position: relative;
+      margin: 20px 0 30px 0;
+    }
+
+    .edit-input {
+      width: 100%;
+      padding: 14px 16px;
+      min-height: 48px;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      font-size: 16px;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", "Segoe UI", Roboto, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      transition: all 0.2s;
+      background: white;
+      color: #333;
+      -webkit-user-select: text;
+      user-select: text;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .edit-input {
+        background: rgba(60, 60, 60, 0.8);
+        border-color: #555;
+        color: #fff;
+      }
+    }
+
+    .edit-input:focus {
+      outline: none;
+      border-color: #007AFF;
+      box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+    }
+
+    .edit-input.error {
+      border-color: #FF3B30;
+      animation: shake 0.3s;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      75% { transform: translateX(5px); }
+    }
+
+    .char-counter {
+      position: absolute;
+      right: 12px;
+      bottom: -24px;
+      font-size: 12px;
+      color: #999;
+      transition: color 0.2s;
+      background: rgba(255, 255, 255, 0.9);
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .char-counter {
+        background: rgba(40, 40, 40, 0.9);
+      }
+    }
+
+    .char-counter.warning {
+      color: #FF9500;
+    }
+
+    .char-counter.error {
+      color: #FF3B30;
+      font-weight: 600;
+    }
+
+    .edit-hint {
+      font-size: 13px;
+      color: #666;
+      margin-bottom: 10px;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .edit-hint {
+        color: #aaa;
+      }
+    }
+
+    .keyboard-hint {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      color: #999;
+      margin-top: 8px;
+    }
+
+    .key {
+      display: inline-block;
+      padding: 2px 6px;
+      background: #f0f0f0;
+      border-radius: 4px;
+      font-family: monospace;
+      font-size: 10px;
+      border: 1px solid #ddd;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .key {
+        background: #555;
+        border-color: #666;
+        color: #fff;
+      }
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin-top: 30px;
+    }
+
+    .btn {
+      padding: 10px 24px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.2s;
+      position: relative;
+      overflow: hidden;
+      outline: none;
+    }
+
+    .btn:focus-visible {
+      box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.3);
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+
+    .btn-primary {
+      background: #007AFF;
+      color: white;
+    }
+
+    .btn-primary:not(:disabled):hover {
+      background: #0051D5;
+      transform: scale(1.05);
+      box-shadow: 0 4px 12px rgba(0, 122, 255, 0.3);
+    }
+
+    .btn-primary.loading::after {
+      content: '';
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      top: 50%;
+      left: 50%;
+      margin-left: -8px;
+      margin-top: -8px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .btn-primary.loading span {
+      opacity: 0;
+    }
+
+    .btn-secondary {
+      background: #e0e0e0;
+      color: #333;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .btn-secondary {
+        background: #555;
+        color: #fff;
+      }
+    }
+
+    .btn-secondary:not(:disabled):hover {
+      background: #d0d0d0;
+      transform: scale(1.05);
+    }
+
+    .btn:active:not(:disabled) {
+      transform: scale(0.95);
+    }
+
+    .toast {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.8);
+      background: rgba(0, 0, 0, 0.85);
+      color: white;
+      padding: 16px 28px;
+      border-radius: 12px;
+      font-size: 15px;
+      z-index: 2000;
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      pointer-events: none;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+      max-width: 300px;
+      text-align: center;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
+
+    .toast.success {
+      background: rgba(52, 199, 89, 0.95);
+    }
+
+    .toast.error {
+      background: rgba(255, 59, 48, 0.95);
+    }
+
+    .toast.warning {
+      background: rgba(255, 149, 0, 0.95);
+    }
+
+    .hint {
+      position: absolute;
+      bottom: 5px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 10px;
+      color: rgba(255, 255, 255, 0.5);
+      opacity: 0;
+      transition: opacity 0.3s;
+      white-space: nowrap;
+      pointer-events: none;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+      z-index: 1;
+    }
+
+    .container:hover .hint {
+      opacity: 1;
+    }
+
+    .modal-hint {
+      margin-top: 15px;
+      font-size: 11px;
+      color: #999;
+    }
+  </style>
+</head>
+<body class="theme-glass">
+  <div class="container">
+    <button class="close-btn" id="closeBtn" title="Quit (Cmd+Q)">×</button>
+    <div class="motto-text" id="mottoText">Loading...</div>
+    <div class="hint" id="hintText">Right-click to edit (Cmd+E) or switch theme (Cmd+T)</div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <!-- 编辑弹窗 -->
+  <div class="modal" id="editModal">
+    <div class="modal-content">
+      <button class="modal-close-btn" id="editModalCloseBtn">×</button>
+      <h2 id="editTitle">Edit Motto</h2>
+      <p class="edit-hint" id="editHint">100 characters max</p>
+      <div class="edit-input-wrapper">
+        <input type="text" class="edit-input" id="mottoInput" placeholder="Enter your motto" maxlength="100" autocomplete="off" spellcheck="false">
+        <div class="char-counter" id="charCounter">0 / 100</div>
+      </div>
+      <div class="keyboard-hint" id="editKeyboardHint">
+        <span class="key" id="keyEnter">↵</span> <span id="saveHintText">Save</span>
+        <span style="margin-left: 8px;"><span class="key" id="keyEsc">Esc</span> <span id="cancelHintText">Cancel</span></span>
+      </div>
+      <div style="text-align: center; margin-top: 15px;">
+        <button id="inspirationBtn" style="background: none; border: none; color: #007AFF; cursor: pointer; font-size: 13px; padding: 5px 10px; border-radius: 6px; transition: background 0.2s;" onmouseover="this.style.background='rgba(0,122,255,0.1)'" onmouseout="this.style.background='none'">💡 Need inspiration?</button>
+      </div>
+      <div class="btn-group">
+        <button class="btn btn-primary" id="editSaveBtn"><span id="editSaveText">Save</span></button>
+        <button class="btn btn-secondary" id="editCancelBtn">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 主题选择弹窗 -->
+  <div class="modal" id="themeModal">
+    <div class="modal-content">
+      <button class="modal-close-btn" id="themeModalCloseBtn">×</button>
+      <h2 id="themeTitle">Choose Theme</h2>
+      <p style="margin-bottom: 10px;" id="themeHint">Select your visual style</p>
+      <div class="theme-grid">
+        <div class="theme-card" data-theme="glass" tabindex="0">
+          <div class="theme-checkmark">✓</div>
+          <div class="theme-name" data-i18n="glass">Glass</div>
+          <div class="theme-preview" data-i18n-preview="glass">Modern & Clean</div>
+        </div>
+        <div class="theme-card" data-theme="vintage" tabindex="0">
+          <div class="theme-checkmark">✓</div>
+          <div class="theme-name" data-i18n="vintage">Vintage</div>
+          <div class="theme-preview" data-i18n-preview="vintage">Nostalgic</div>
+        </div>
+        <div class="theme-card" data-theme="gift" tabindex="0">
+          <div class="theme-checkmark">✓</div>
+          <div class="theme-name" data-i18n="gift">Gift Card</div>
+          <div class="theme-preview" data-i18n-preview="gift">Warm</div>
+        </div>
+        <div class="theme-card" data-theme="minimal" tabindex="0">
+          <div class="theme-checkmark">✓</div>
+          <div class="theme-name" data-i18n="minimal">Minimal</div>
+          <div class="theme-preview" data-i18n-preview="minimal">Simple</div>
+        </div>
+        <div class="theme-card" data-theme="rainbow" tabindex="0">
+          <div class="theme-checkmark">✓</div>
+          <div class="theme-name" data-i18n="rainbow">Rainbow</div>
+          <div class="theme-preview" data-i18n-preview="rainbow">Colorful</div>
+        </div>
+        <div class="theme-card" data-theme="neon" tabindex="0">
+          <div class="theme-checkmark">✓</div>
+          <div class="theme-name" data-i18n="neon">Neon</div>
+          <div class="theme-preview" data-i18n-preview="neon">Futuristic</div>
+        </div>
+        <div class="theme-card" data-theme="wood" tabindex="0">
+          <div class="theme-checkmark">✓</div>
+          <div class="theme-name" data-i18n="wood">Wood</div>
+          <div class="theme-preview" data-i18n-preview="wood">Natural</div>
+        </div>
+        <div class="theme-card" data-theme="sakura" tabindex="0">
+          <div class="theme-checkmark">✓</div>
+          <div class="theme-name" data-i18n="sakura">Sakura</div>
+          <div class="theme-preview" data-i18n-preview="sakura">Romantic</div>
+        </div>
+      </div>
+      <p class="modal-hint" id="themeModalHint">Press <span class="key">Esc</span> to close</p>
+    </div>
+  </div>
+
+  <!-- 关于弹窗 -->
+  <div class="modal" id="aboutModal">
+    <div class="modal-content">
+      <button class="modal-close-btn" id="aboutModalCloseBtn">×</button>
+      <h2 id="aboutTitle">ChiefMotto</h2>
+
+      <!-- 作者信息 -->
+      <p style="margin-top: 10px; font-size: 14px; font-weight: 500; color: #007AFF;" id="aboutAuthor">AI酋长Andy 出品</p>
+      <p id="aboutVersion">Version 1.0.0</p>
+      <p style="margin-top: 15px; font-size: 13px; font-weight: 500; color: #007AFF; text-transform: uppercase; letter-spacing: 0.5px;" id="aboutSlogan">Keep your focus, every single day</p>
+
+      <!-- 联系方式提前 -->
+      <div style="margin-top: 25px; padding: 20px; background: rgba(0, 122, 255, 0.05); border-radius: 12px; border: 1px solid rgba(0, 122, 255, 0.2);" id="contactSection">
+        <p style="font-size: 14px; font-weight: 600; color: #007AFF; margin-bottom: 10px;" id="contactTitle">💡 联系我</p>
+        <p style="font-size: 13px; color: #666; margin-bottom: 15px;" id="contactDesc">获取更新和更多工具</p>
+
+        <!-- WeChat contact (for Chinese users) -->
+        <div id="wechatContact" style="margin-bottom: 15px;">
+          <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 10px;">
+            <span id="wechatIdDisplay" style="font-size: 14px; color: #000; font-weight: 600; font-family: monospace; background: rgba(255, 255, 255, 0.9); padding: 8px 16px; border-radius: 8px; border: 1px solid #ddd;">AIPMAndy</span>
+            <button class="btn btn-secondary" id="copyWechatBtn" style="padding: 6px 16px; font-size: 12px;">复制微信号</button>
+          </div>
+          <p style="font-size: 11px; color: #999;" id="wechatHint">在微信中搜索添加</p>
+        </div>
+
+        <!-- Email contact (for all users) -->
+        <div id="emailContact" style="margin-top: 15px;">
+          <div style="display: flex; align-items: center; justify-content: center; gap: 10px;">
+            <span id="emailDisplay" style="font-size: 14px; color: #000; font-weight: 600; font-family: monospace; background: rgba(255, 255, 255, 0.9); padding: 8px 16px; border-radius: 8px; border: 1px solid #ddd;">supera6@qq.com</span>
+            <button class="btn btn-secondary" id="copyEmailBtn" style="padding: 6px 16px; font-size: 12px;">复制邮箱</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Current Motto Section -->
+      <div style="margin-top: 25px; padding: 20px; background: linear-gradient(135deg, rgba(0, 122, 255, 0.08) 0%, rgba(0, 122, 255, 0.03) 100%); border-radius: 12px; border: 1px solid rgba(0, 122, 255, 0.15);">
+        <p style="font-size: 11px; font-weight: 600; color: #007AFF; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px;" id="currentMottoLabel">当前座右铭</p>
+        <p style="font-size: 14px; font-weight: 500; color: #000; line-height: 1.5; margin: 0;" id="aboutMottoText">在这里输入你的座右铭</p>
+      </div>
+
+      <div id="usageStats" style="margin-top: 20px; padding: 15px; background: rgba(52, 199, 89, 0.08); border-radius: 10px; text-align: center;">
+        <p style="font-size: 13px; color: #34C759; font-weight: 600; margin: 0;" id="usageText">已使用 X 天</p>
+      </div>
+
+      <p style="margin-top: 20px; font-size: 13px; color: #666; line-height: 1.6; text-align: center;" id="aboutDescription">一个极简的桌面座右铭应用，帮助你专注于真正重要的事情。</p>
+
+      <p class="modal-hint" id="aboutHint">按 <span class="key">Esc</span> 关闭</p>
+      <button class="btn btn-primary" id="aboutCloseBtn" style="margin-top: 20px;">关闭</button>
+    </div>
+  </div>
+
+  <!-- 灵感弹窗 -->
+  <div class="modal" id="inspirationModal">
+    <div class="modal-content" style="max-width: 500px;">
+      <button class="modal-close-btn" id="inspirationModalCloseBtn">×</button>
+      <h2 id="inspirationTitle" style="margin-bottom: 20px;">Featured Mottos</h2>
+      <div id="inspirationContent" style="text-align: left;"></div>
+      <p class="modal-hint" style="margin-top: 20px;">Click any motto to use it</p>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+  <script src="i18n-init.js"></script>
+</body>
+</html>

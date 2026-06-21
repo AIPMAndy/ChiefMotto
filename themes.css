@@ -1,0 +1,340 @@
+/* 主题样式 */
+
+/* 毛玻璃主题（默认） */
+.theme-glass .container {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(30px) saturate(200%);
+  -webkit-backdrop-filter: blur(30px) saturate(200%);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.25), inset 0 1px 0 0 rgba(255, 255, 255, 0.3);
+  color: rgba(255, 255, 255, 0.98);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+.theme-glass .hint {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.theme-glass .close-btn {
+  background: rgba(255, 59, 48, 0.85);
+}
+
+@media (prefers-color-scheme: dark) {
+  .theme-glass .container {
+    background: rgba(30, 30, 30, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+  }
+}
+
+/* 复古纸张主题 */
+.theme-vintage .container {
+  background: linear-gradient(135deg, #f5e6d3 0%, #e8d5b7 100%);
+  border: 3px solid #8b7355;
+  box-shadow:
+    0 4px 6px rgba(0, 0, 0, 0.1),
+    inset 0 0 100px rgba(139, 115, 85, 0.1);
+  color: #3d2817;
+  text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);
+  font-family: "Georgia", "Times New Roman", serif;
+  font-size: 18px;
+  font-style: italic;
+}
+
+.theme-vintage .motto-text {
+  font-family: "Georgia", "Times New Roman", serif;
+  font-style: italic;
+  line-height: 1.7;
+}
+
+.theme-vintage .hint {
+  color: rgba(61, 40, 23, 0.5);
+}
+
+.theme-vintage .close-btn {
+  background: rgba(139, 115, 85, 0.85);
+}
+
+.theme-vintage .close-btn:hover {
+  background: rgba(139, 115, 85, 1);
+}
+
+.theme-vintage .container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background:
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(139, 115, 85, 0.03) 2px,
+      rgba(139, 115, 85, 0.03) 4px
+    );
+  pointer-events: none;
+  border-radius: 12px;
+  z-index: 0;
+}
+
+/* 礼物卡片主题 */
+.theme-gift .container {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  box-shadow:
+    0 10px 40px rgba(102, 126, 234, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  color: #ffffff;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.theme-gift .hint {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.theme-gift .close-btn {
+  background: rgba(255, 255, 255, 0.3);
+  color: #667eea;
+}
+
+.theme-gift .close-btn:hover {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.theme-gift .container::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 20px,
+    rgba(255, 255, 255, 0.03) 20px,
+    rgba(255, 255, 255, 0.03) 40px
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* 极简黑白主题 */
+.theme-minimal .container {
+  background: #ffffff;
+  border: 2px solid #000000;
+  box-shadow: 4px 4px 0 #000000;
+  color: #000000;
+  text-shadow: none;
+  font-weight: 300;
+  font-size: 18px;
+  letter-spacing: 2px;
+}
+
+.theme-minimal .motto-text {
+  font-weight: 300;
+}
+
+.theme-minimal .hint {
+  color: rgba(0, 0, 0, 0.4);
+}
+
+.theme-minimal .close-btn {
+  background: #000000;
+  color: #ffffff;
+}
+
+.theme-minimal .close-btn:hover {
+  background: #333333;
+}
+
+@media (prefers-color-scheme: dark) {
+  .theme-minimal .container {
+    background: #000000;
+    border: 2px solid #ffffff;
+    box-shadow: 4px 4px 0 #ffffff;
+    color: #ffffff;
+  }
+
+  .theme-minimal .hint {
+    color: rgba(255, 255, 255, 0.4);
+  }
+
+  .theme-minimal .close-btn {
+    background: #ffffff;
+    color: #000000;
+  }
+
+  .theme-minimal .close-btn:hover {
+    background: #cccccc;
+  }
+}
+
+/* 渐变彩虹主题 */
+.theme-rainbow .container {
+  background: linear-gradient(
+    135deg,
+    #667eea 0%,
+    #764ba2 25%,
+    #f093fb 50%,
+    #4facfe 75%,
+    #00f2fe 100%
+  );
+  background-size: 400% 400%;
+  animation: gradientShift 15s ease infinite;
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  color: #ffffff;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.6);
+  font-weight: 600;
+}
+
+.theme-rainbow .hint {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.theme-rainbow .close-btn {
+  background: rgba(255, 255, 255, 0.3);
+  color: #667eea;
+}
+
+.theme-rainbow .close-btn:hover {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+@keyframes gradientShift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+/* 霓虹灯主题 */
+.theme-neon .container {
+  background: rgba(10, 10, 30, 0.95);
+  border: 2px solid #00ffff;
+  box-shadow:
+    0 0 20px rgba(0, 255, 255, 0.5),
+    0 0 40px rgba(0, 255, 255, 0.3),
+    inset 0 0 20px rgba(0, 255, 255, 0.1);
+  color: #00ffff;
+  text-shadow:
+    0 0 10px rgba(0, 255, 255, 0.8),
+    0 0 20px rgba(0, 255, 255, 0.6),
+    0 0 30px rgba(0, 255, 255, 0.4),
+    0 0 40px rgba(0, 255, 255, 0.2);
+  font-weight: 500;
+  font-size: 18px;
+  letter-spacing: 3px;
+  animation: neonPulse 2s ease-in-out infinite;
+}
+
+.theme-neon .motto-text {
+  text-transform: uppercase;
+  letter-spacing: 3px;
+}
+
+.theme-neon .hint {
+  color: rgba(0, 255, 255, 0.5);
+}
+
+.theme-neon .close-btn {
+  background: rgba(0, 255, 255, 0.3);
+  color: #00ffff;
+  border: 1px solid #00ffff;
+}
+
+.theme-neon .close-btn:hover {
+  background: rgba(0, 255, 255, 0.5);
+  box-shadow: 0 0 10px #00ffff;
+}
+
+@keyframes neonPulse {
+  0%, 100% {
+    box-shadow:
+      0 0 20px rgba(0, 255, 255, 0.5),
+      0 0 40px rgba(0, 255, 255, 0.3),
+      inset 0 0 20px rgba(0, 255, 255, 0.1);
+  }
+  50% {
+    box-shadow:
+      0 0 30px rgba(0, 255, 255, 0.7),
+      0 0 60px rgba(0, 255, 255, 0.5),
+      inset 0 0 30px rgba(0, 255, 255, 0.2);
+  }
+}
+
+/* 木纹主题 */
+.theme-wood .container {
+  background: linear-gradient(
+    90deg,
+    #8b6f47 0%,
+    #a0826d 20%,
+    #8b6f47 40%,
+    #a0826d 60%,
+    #8b6f47 80%,
+    #a0826d 100%
+  );
+  border: 3px solid #5d4e37;
+  box-shadow:
+    0 4px 8px rgba(0, 0, 0, 0.3),
+    inset 0 2px 4px rgba(255, 255, 255, 0.1);
+  color: #f5deb3;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
+  font-weight: 700;
+  font-size: 18px;
+}
+
+.theme-wood .motto-text {
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.theme-wood .hint {
+  color: rgba(245, 222, 179, 0.5);
+}
+
+.theme-wood .close-btn {
+  background: rgba(93, 78, 55, 0.85);
+}
+
+.theme-wood .close-btn:hover {
+  background: rgba(93, 78, 55, 1);
+}
+
+/* 樱花主题 */
+.theme-sakura .container {
+  background: linear-gradient(135deg, #ffeef8 0%, #ffe0f0 100%);
+  border: 2px solid #ffb7d5;
+  box-shadow: 0 8px 24px rgba(255, 183, 213, 0.3);
+  color: #d5006d;
+  text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
+  position: relative;
+  overflow: hidden;
+}
+
+.theme-sakura .hint {
+  color: rgba(213, 0, 109, 0.4);
+}
+
+.theme-sakura .close-btn {
+  background: rgba(255, 183, 213, 0.85);
+  color: #d5006d;
+}
+
+.theme-sakura .close-btn:hover {
+  background: rgba(255, 183, 213, 1);
+}
+
+.theme-sakura .container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at 90% 10%, rgba(255, 183, 213, 0.2) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 0;
+}

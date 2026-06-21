@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>ChiefMotto Icon Generator</title>
+</head>
+<body>
+  <canvas id="canvas" width="1024" height="1024"></canvas>
+  <script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    
+    // 背景 - 渐变
+    const gradient = ctx.createLinearGradient(0, 0, 1024, 1024);
+    gradient.addColorStop(0, '#667eea');
+    gradient.addColorStop(1, '#764ba2');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, 1024, 1024);
+    
+    // 圆角矩形遮罩
+    ctx.globalCompositeOperation = 'destination-in';
+    ctx.beginPath();
+    ctx.roundRect(0, 0, 1024, 1024, 180);
+    ctx.fill();
+    ctx.globalCompositeOperation = 'source-over';
+    
+    // 装饰圆圈
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+    ctx.lineWidth = 40;
+    ctx.beginPath();
+    ctx.arc(512, 512, 350, 0, Math.PI * 2);
+    ctx.stroke();
+    
+    // 文字 "座"
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 480px "PingFang SC", "Hiragino Sans GB", sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('座', 512, 512);
+    
+    // 底部小字
+    ctx.font = 'bold 80px "PingFang SC"';
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+    ctx.fillText('右铭', 512, 820);
+    
+    // 导出图片
+    console.log('Icon created');
+  </script>
+</body>
+</html>

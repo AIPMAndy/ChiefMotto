@@ -1,0 +1,25 @@
+# Dependencies
+node_modules/
+
+# Build
+dist/
+build/
+
+# System
+.DS_Store
+*.log
+
+# Environment
+.env
+.env.local
+
+# IDE
+.vscode/
+.idea/
+
+# Lock files
+*.lock
+bun.lock
+
+# Backup files
+*.backup
