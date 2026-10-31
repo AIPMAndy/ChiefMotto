@@ -52,31 +52,40 @@ const safeLocalStorage = {
   }
 };
 
-// Detect system language or load saved preference
-function detectLanguage() {
-  const savedLang = safeLocalStorage.getItem('userLang');
-  if (savedLang) {
-    userLang = savedLang;
-  } else {
-    // Default to Chinese for better local user experience
-    userLang = 'zh';
+// Load language from main process
+async function detectLanguage() {
+  if (window.electronAPI && window.electronAPI.getLanguage) {
+    try {
+      const savedLang = await window.electronAPI.getLanguage();
+      if (savedLang === 'en' || savedLang === 'zh') {
+        userLang = savedLang;
+        return;
+      }
+    } catch (e) {
+      console.error('Failed to load language:', e);
+    }
   }
+
+  // Default to Chinese for better local user experience
+  userLang = 'zh';
 }
 
-// Save language preference
+// Apply language change
 function setLanguage(lang) {
   userLang = lang;
-  safeLocalStorage.setItem('userLang', lang);
-  // Reload page to apply new language
+  // Reload page to apply static text updates
   location.reload();
 }
 
-detectLanguage();
+const languageReady = detectLanguage();
+window.languageReady = languageReady;
 
-setTimeout(() => {
-  isAnimationComplete = true;
-  checkFirstLaunch();
-}, 400);
+languageReady.then(() => {
+  setTimeout(() => {
+    isAnimationComplete = true;
+    checkFirstLaunch();
+  }, 400);
+});
 
 // i18n text content
 const i18n = {
@@ -118,6 +127,7 @@ const i18n = {
     wechatHint: 'Search and add on WeChat',
     needInspiration: '💡 Need inspiration?',
     inspirationTitle: 'Featured Mottos',
+    inspirationHint: 'Click any motto to use it',
     inspirationCategories: {
       focus: 'Focus',
       courage: 'Courage',
@@ -205,6 +215,7 @@ const i18n = {
     wechatHint: '复制后在微信中搜索添加',
     needInspiration: '💡 需要灵感？',
     inspirationTitle: '精选座右铭',
+    inspirationHint: '点击任意座右铭即可使用',
     inspirationCategories: {
       focus: '专注力',
       courage: '勇气',
@@ -456,22 +467,25 @@ function applyTheme(theme, animate = true) {
   }
 }
 
-loadMotto();
-loadTheme();
+async function initializeApp() {
+  await languageReady;
+  await loadTheme();
+  await loadMotto();
+}
+
+initializeApp();
 
 // Debounced window size adjustment to avoid excessive resizing
 let adjustWindowSizeTimer = null;
 function adjustWindowSize() {
   clearTimeout(adjustWindowSizeTimer);
   adjustWindowSizeTimer = setTimeout(() => {
-    const text = document.querySelector('.motto-text');
+    const container = document.querySelector('.container');
+    if (!container) return;
+
     requestAnimationFrame(() => {
-      const textWidth = text.offsetWidth;
-      const textHeight = text.offsetHeight;
-      // Increase max width to 800px for longer English quotes
-      // Add more padding for better spacing
-      const windowWidth = Math.min(Math.max(textWidth + 80, 200), 800);
-      const windowHeight = textHeight + 50;
+      const windowWidth = Math.min(Math.max(container.offsetWidth, 200), 600);
+      const windowHeight = container.offsetHeight;
       if (window.electronAPI && window.electronAPI.resizeWindow) {
         window.electronAPI.resizeWindow({
           width: Math.ceil(windowWidth),

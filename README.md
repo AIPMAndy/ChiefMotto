@@ -68,3 +68,7 @@ npm run build
 ## License
 
 MIT
+
+---
+
+> 本项目由 **AI 酋长 Andy**（[@AIPMAndy](https://github.com/AIPMAndy)）开源。

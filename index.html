@@ -29,6 +29,8 @@
       padding: 20px 30px 25px 30px;
       border-radius: 12px;
       position: relative;
+      display: inline-block;
+      width: max-content;
       min-width: 200px;
       max-width: 600px;
       animation: fadeInUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
@@ -763,7 +765,7 @@
       <button class="modal-close-btn" id="inspirationModalCloseBtn">×</button>
       <h2 id="inspirationTitle" style="margin-bottom: 20px;">Featured Mottos</h2>
       <div id="inspirationContent" style="text-align: left;"></div>
-      <p class="modal-hint" style="margin-top: 20px;">Click any motto to use it</p>
+      <p class="modal-hint" id="inspirationHint" style="margin-top: 20px;">Click any motto to use it</p>
     </div>
   </div>
 

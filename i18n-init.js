@@ -1,5 +1,5 @@
 // Initialize i18n content after DOM loaded
-document.addEventListener('DOMContentLoaded', () => {
+function applyI18nContent() {
   // Update hint text
   document.getElementById('hintText').textContent = t('hintText');
 
@@ -11,9 +11,12 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('editHint').textContent = t('editHint');
   document.getElementById('mottoInput').placeholder = t('editPlaceholder');
   document.getElementById('editSaveText').textContent = t('editSave');
+  document.getElementById('saveHintText').textContent = t('editSave');
   document.getElementById('editCancelBtn').textContent = t('editCancel');
+  document.getElementById('cancelHintText').textContent = t('editCancel');
   document.getElementById('inspirationBtn').textContent = t('needInspiration');
   document.getElementById('inspirationTitle').textContent = t('inspirationTitle');
+  document.getElementById('inspirationHint').textContent = t('inspirationHint');
 
   // Update char counter initial state
   document.getElementById('charCounter').textContent = t('charCounter').replace('{current}', '0');
@@ -59,7 +62,9 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('wechatHint').textContent = t('wechatHint');
 
   // Hide WeChat section for non-Chinese users
-  if (userLang !== 'zh') {
-    document.getElementById('wechatContact').style.display = 'none';
-  }
+  document.getElementById('wechatContact').style.display = userLang === 'zh' ? '' : 'none';
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  Promise.resolve(window.languageReady).then(applyI18nContent);
 });

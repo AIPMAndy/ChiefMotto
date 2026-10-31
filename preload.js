@@ -12,5 +12,6 @@ contextBridge.exposeInMainWorld('electronAPI', {
   getMotto: () => ipcRenderer.invoke('get-motto'),
   saveTheme: (theme) => ipcRenderer.invoke('save-theme', theme),
   getTheme: () => ipcRenderer.invoke('get-theme'),
+  getLanguage: () => ipcRenderer.invoke('get-language'),
   notifyModalClosed: () => ipcRenderer.send('modal-closed')
 });

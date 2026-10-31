@@ -641,6 +641,11 @@ ipcMain.on('resize-window', (event, size) => {
   }
 });
 
+// 获取当前语言
+ipcMain.handle('get-language', () => {
+  return store.get('language') || currentLang;
+});
+
 // 获取座右铭
 ipcMain.handle('get-motto', () => {
   return store.get('motto');

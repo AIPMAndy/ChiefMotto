@@ -23,3 +23,9 @@ bun.lock
 
 # Backup files
 *.backup
+
+# Local tools
+.claude/
+*.dmg
+*.zip
+.env.*
